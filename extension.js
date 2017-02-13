@@ -55,7 +55,7 @@ define(function(require, exports, module) {
   }
 
   function setContent(content) {
-    var blob = new Blob([content], { type: 'plain/text'});
+    var blob = new Blob([content], {type: 'plain/text'});
     var url = URL.createObjectURL(blob);
 
     var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
@@ -64,29 +64,8 @@ define(function(require, exports, module) {
       fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(location.href) + "/" + fileDirectory;
     }
 
-    var bodyRegex = /\<body[^>]*\>([^]*)\<\/body/m; // jshint ignore:line
-    var bodyContent = content;
-
-  /*  try {
-      bodyContent = content.match(bodyRegex)[1];
-    } catch (e) {
-      console.log("Error parsing the body of the RTF document. " + e);
-      bodyContent = content;
-    }
-    try {
-      var scrappedOnRegex = /data-scrappedon='([^']*)'/m; // jshint ignore:line
-      scrappedOn = content.match(scrappedOnRegex)[1];
-    } catch (e) {
-      console.log("Error parsing the meta from the RTF document. " + e);
-    }
-    var sourceURLRegex = /data-sourceurl='([^']*)'/m; // jshint ignore:line
-    var regex = new RegExp(sourceURLRegex);
-    sourceURL = content.match(regex);
-    var url = sourceURL ? sourceURL[1] : undefined;*/
-
     // removing all scripts from the document
-    var cleanedBodyContent = bodyContent;
-    //var cleanedBodyContent = bodyContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+    var cleanedBodyContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
 
     var contentWindow = document.getElementById("iframeViewer").contentWindow;
     if (typeof contentWindow.setContent === "function") {

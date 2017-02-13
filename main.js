@@ -110,12 +110,12 @@ $(document).ready(function() {
   // Menu: hide readability items
   $("#readabilityFont").hide();
   $("#readabilityFontSize").hide();
-  $("#themeStyle").hide();
+  //$("#themeStyle").hide();
   $("#readabilityOff").hide();
 });
 
 // fixing embedding of local images
-function fixingEmbeddingOfLocalImages($htmlContent, fileDirectory) {
+function fixingEmbeddingOfLocalImages($rtfContent, fileDirectory) {
   var hasURLProtocol = function(url) {
     return (
       url.indexOf("http://") === 0 ||
@@ -125,7 +125,7 @@ function fixingEmbeddingOfLocalImages($htmlContent, fileDirectory) {
     );
   };
 
-  $htmlContent.find("img[src]").each(function() {
+  $rtfContent.find("img[src]").each(function() {
     var currentSrc = $(this).attr("src");
     if (!hasURLProtocol(currentSrc)) {
       var path = (isWeb ? "" : "file://") + fileDirectory + "/" + currentSrc;
@@ -133,7 +133,7 @@ function fixingEmbeddingOfLocalImages($htmlContent, fileDirectory) {
     }
   });
 
-  $htmlContent.find("a[href]").each(function() {
+  $rtfContent.find("a[href]").each(function() {
     var currentSrc = $(this).attr("href");
     var path;
 
@@ -157,7 +157,7 @@ function fixingEmbeddingOfLocalImages($htmlContent, fileDirectory) {
 function stringToBinaryArray(string) {
   var buffer = new ArrayBuffer(string.length);
   var bufferView = new Uint8Array(buffer);
-  for (var i=0; i<string.length; i++) {
+  for (var i = 0; i < string.length; i++) {
     bufferView[i] = string.charCodeAt(i);
   }
   return buffer;
@@ -218,6 +218,7 @@ function displayRtfFile(blob) {
     console.log("All done!");
   } catch (e) {
     if (e instanceof RTFJS.Error) {
+      console.log("Error: " + e.message);
       $("#content").text("Error: " + e.message);
     }
     else {
@@ -226,7 +227,7 @@ function displayRtfFile(blob) {
   }
 }
 
-function setContent(content, fileDirectory, sourceURL, scrappedOn) {
+function setContent(content, fileDirectory, sourceURL) {
   $rtfContent = $("#rtfContent");
 
   displayRtfFile(stringToBinaryArray(content));
@@ -238,7 +239,7 @@ function setContent(content, fileDirectory, sourceURL, scrappedOn) {
   fixingEmbeddingOfLocalImages($rtfContent, fileDirectory);
 
   // View readability mode
-  var readabilityViewer = document.getElementById("htmlContent");
+  var readabilityViewer = document.getElementById("rtfContent");
   var fontSize = 14;
 
   $("#readabilityOn").on('click', function() {
@@ -252,7 +253,7 @@ function setContent(content, fileDirectory, sourceURL, scrappedOn) {
       readabilityViewer.style.background = "#ffffff";
       readabilityViewer.style.color = "";
       $("#readabilityOff").css("display", "inline-block");
-      $("#themeStyle").show();
+      //$("#themeStyle").show();
       $("#readabilityFont").show();
       $("#readabilityFontSize").show();
       $("#readabilityOn").hide();
@@ -341,8 +342,6 @@ function setContent(content, fileDirectory, sourceURL, scrappedOn) {
   function increaseFont() {
     try {
       var style = window.getComputedStyle(readabilityViewer, null).getPropertyValue('font-size');
-      console.log(style);
-      console.debug(style);
       var fontSize = parseFloat(style);
       //if($('#readability-page-1').hasClass('page')){
       var page = document.getElementsByClassName("markdown");
