@@ -5,7 +5,7 @@ define(function(require, exports, module) {
   "use strict";
 
   var extensionID = "viewerRTF"; // ID should be equal to the directory name where the ext. is located
-  var extensionSupportedFileTypes = ["rtf", "wmf"];
+  //var extensionSupportedFileTypes = ["rtf", "wmf"];
 
   console.log("Loading " + extensionID);
 
@@ -14,9 +14,6 @@ define(function(require, exports, module) {
   var $containerElement;
   var currentFilePath;
   var extensionDirectory = TSCORE.Config.getExtensionPath() + "/" + extensionID;
-
-  var sourceURL = "";
-  var scrappedOn = "";
 
   function init(filePath, containerElementID) {
     console.log("Initalization RTF Viewer...");
@@ -69,11 +66,11 @@ define(function(require, exports, module) {
 
     var contentWindow = document.getElementById("iframeViewer").contentWindow;
     if (typeof contentWindow.setContent === "function") {
-      contentWindow.setContent(cleanedBodyContent, fileDirectory, url, scrappedOn);
+      contentWindow.setContent(cleanedBodyContent, fileDirectory, url);
     } else {
       // TODO optimize setTimeout
       window.setTimeout(function() {
-        contentWindow.setContent(cleanedBodyContent, fileDirectory, url, scrappedOn);
+        contentWindow.setContent(cleanedBodyContent, fileDirectory, url);
       }, 500);
     }
   }

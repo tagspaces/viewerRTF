@@ -162,7 +162,9 @@ function stringToBinaryArray(string) {
   }
   return buffer;
 }
-
+function setPictBorder(elem, show) {
+  return elem.css("border", show ? "1px dotted red" : "none");
+}
 function setUnsafeLink(elem, warn) {
   return elem.css("border", warn ? "1px dashed red" : "none");
 }
