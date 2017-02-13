@@ -1,5 +1,5 @@
 {
-  "name": "RTF viewer",
+  "name": "rtf-viewer",
   "id": "viewerRTF",
   "description": "A TagSpaces extension allowing opening of RTF files.",
   "type": "viewer",
