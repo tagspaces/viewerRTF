@@ -203,7 +203,6 @@ function displayRtfFile(blob) {
       }
     };
     var doc = new RTFJS.Document(blob, settings);
-    console.log(doc)
     var haveMeta = false;
     var meta = doc.metadata();
     for (var prop in meta) {
