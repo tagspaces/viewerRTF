@@ -8,7 +8,7 @@ Here is a list of the key feutures offered by this extension.
 ## Used libraries
 This extension thankfully relays on the following great libraries:
 
-* [markdown-css](https://github.com/rhiokim/markdown-css)
+* [rtf.js](https://github.com/tbluemel/rtf.js)
 
 ## Installation
 

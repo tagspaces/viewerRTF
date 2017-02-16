@@ -162,12 +162,15 @@ function stringToBinaryArray(string) {
   }
   return buffer;
 }
+
 function setPictBorder(elem, show) {
   return elem.css("border", show ? "1px dotted red" : "none");
 }
+
 function setUnsafeLink(elem, warn) {
   return elem.css("border", warn ? "1px dashed red" : "none");
 }
+
 function displayRtfFile(blob) {
   try {
     var showPicBorder = $("#showpicborder").prop("checked");
@@ -242,7 +245,7 @@ function setContent(content, fileDirectory, sourceURL) {
   // View readability mode
   var readabilityViewer = document.getElementById("rtfContent");
   var fontSize = 14;
-
+/*
   $("#readabilityOn").on('click', function() {
     try {
       var documentClone = document.cloneNode(true);
@@ -290,7 +293,7 @@ function setContent(content, fileDirectory, sourceURL) {
     $("#readabilityFontSize").hide();
     $("#themeStyle").hide();
   });
-
+*/
   $("#toSansSerifFont").on('click', function(e) {
     e.stopPropagation();
     readabilityViewer.style.fontFamily = "Helvetica, Arial, sans-serif";

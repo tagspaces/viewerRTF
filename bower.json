@@ -5,7 +5,7 @@
   "type": "viewer",
   "version": "1.0.0",
   "dependencies": {
-    "rtf" : "git+https://github.com/zoehneto/rtf.js"
+    "rtf" : "git+https://github.com/tbluemel/rtf.js"
   },
   "devDependencies": {},
   "authors": [
@@ -13,6 +13,7 @@
     "Ilian Sapundshiev - http://ilian.me"
   ],
   "keywords": [
+    "tagspaces",
     "rtf",
     "wmf",
     "viewer"
