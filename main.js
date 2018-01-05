@@ -5,10 +5,11 @@
 "use strict";
 
 var $rtfContent;
-var loadContentExternally = true;
 var isWeb = (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/'));
 
 $(document).ready(function() {
+  sendMessageToHost({command: 'loadDefaultTextContent'});
+
   function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
@@ -17,12 +18,10 @@ $(document).ready(function() {
   }
 
   var locale = getParameterByName("locale");
-
+  var filePath = getParameterByName("file");
   var searchQuery = getParameterByName("query");
-
-  isWeb = parent.isWeb;
-
   var extSettings;
+
   loadExtSettings();
 
   // Init internationalization
@@ -341,8 +340,7 @@ function setContent(content, fileDirectory, sourceURL) {
   }
 
   $('#openSourceURL').on('click', function() {
-    var msg = {command: "openLinkExternally", link: sourceURL};
-    window.parent.postMessage(JSON.stringify(msg), "*");
+    sendMessageToHost({command: 'openLinkExternally', link: sourceURL});
   });
 
   function increaseFont() {
