@@ -4,12 +4,12 @@
 /* globals marked, Readability, Mousetrap */
 "use strict";
 
+sendMessageToHost({command: 'loadDefaultTextContent'});
+
 var $rtfContent;
 var isWeb = (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/'));
 
 $(document).ready(function() {
-  sendMessageToHost({command: 'loadDefaultTextContent'});
-
   function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
