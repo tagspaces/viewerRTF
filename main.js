@@ -150,7 +150,7 @@ function fixingEmbeddingOfLocalImages($rtfContent, fileDirectory) {
         currentSrc = encodeURIComponent(path);
       }
       var msg = {command: "openLinkExternally", link: currentSrc};
-      window.parent.postMessage(JSON.stringify(msg), "*");
+      sendMessageToHost(msg);
     });
   });
 }
