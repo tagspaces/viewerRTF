@@ -2,7 +2,7 @@
  * Use of this source code is governed by the MIT license which can be found in the LICENSE.txt file. */
 
 /* globals marked, Readability, Mousetrap */
-"use strict";
+'use strict';
 
 sendMessageToHost({command: 'loadDefaultTextContent'});
 
@@ -22,18 +22,8 @@ $(document).ready(function() {
   var searchQuery = getParameterByName("query");
   var extSettings;
 
+  initI18N(locale, 'ns.viewerRTF.json');
   loadExtSettings();
-
-  // Init internationalization
-  i18next.init({
-    ns: {namespaces: ['ns.viewerRTF']},
-    debug: true,
-    lng: locale,
-    fallbackLng: 'en_US'
-  }, function() {
-    jqueryI18next.init(i18next, $);
-    $('[data-i18n]').localize();
-  });
 
   $rtfContent = $("#rtfContent");
 
