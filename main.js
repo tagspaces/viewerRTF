@@ -7,7 +7,6 @@
 sendMessageToHost({command: 'loadDefaultTextContent'});
 
 var $rtfContent;
-var isWeb = (document.URL.startsWith('http') && !document.URL.startsWith('http://localhost:1212/'));
 
 $(document).ready(function() {
   var locale = getParameterByName('locale');
