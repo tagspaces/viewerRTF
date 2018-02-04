@@ -1,7 +1,7 @@
 /* Copyright (c) 2013-present The TagSpaces Authors.
  * Use of this source code is governed by the MIT license which can be found in the LICENSE.txt file. */
 
-/* globals marked, Readability, Mousetrap, initI18N, $, isWeb, sendMessageToHost */
+/* globals Mousetrap, initI18N, $, isWeb, sendMessageToHost, getParameterByName, RTFJS, setContent */
 'use strict';
 
 sendMessageToHost({ command: 'loadDefaultTextContent' });
@@ -10,8 +10,8 @@ let $rtfContent;
 
 $(document).ready(() => {
   const locale = getParameterByName('locale');
-  const filePath = getParameterByName('file');
-  const searchQuery = getParameterByName('query');
+  // const filePath = getParameterByName('file');
+  // const searchQuery = getParameterByName('query');
   let extSettings;
 
   initI18N(locale, 'ns.viewerRTF.json');
@@ -76,14 +76,14 @@ $(document).ready(() => {
 });
 
 // fixing embedding of local images
-function fixingEmbeddingOfLocalImages($rtfContent, fileDirectory) {
+function fixingEmbeddingOfLocalImages($rtfContentPar, fileDirectory) {
   const hasURLProtocol = url =>
     url.indexOf('http://') === 0 ||
     url.indexOf('https://') === 0 ||
     url.indexOf('file://') === 0 ||
     url.indexOf('data:') === 0;
 
-  $rtfContent.find('img[src]').each(() => {
+  $rtfContentPar.find('img[src]').each(() => {
     const currentSrc = $(this).attr('src');
     if (!hasURLProtocol(currentSrc)) {
       const path = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
@@ -91,7 +91,7 @@ function fixingEmbeddingOfLocalImages($rtfContent, fileDirectory) {
     }
   });
 
-  $rtfContent.find('a[href]').each(() => {
+  $rtfContentPar.find('a[href]').each(() => {
     let currentSrc = $(this).attr('href');
     let path;
 
@@ -188,11 +188,12 @@ function displayRtfFile(blob) {
   }
 }
 
-function setContent(content, fileDirectory) {
+function setContent(content, fileDir) {
   $rtfContent = $('#rtfContent');
 
   displayRtfFile(stringToBinaryArray(content));
 
+  let fileDirectory = fileDir;
   if (fileDirectory.indexOf('file://') === 0) {
     fileDirectory = fileDirectory.substring(
       'file://'.length,
@@ -202,41 +203,13 @@ function setContent(content, fileDirectory) {
 
   fixingEmbeddingOfLocalImages($rtfContent, fileDirectory);
 
-  function increaseFont() {
-    try {
-      let style = window
-        .getComputedStyle(readabilityViewer, null)
-        .getPropertyValue('font-size');
-      let fontSize = parseFloat(style);
-      //if($('#readability-page-1').hasClass('page')){
-      let page = document.getElementsByClassName('markdown');
-      console.log(page[0].style);
-      page[0].style.fontSize = fontSize + 1 + 'px';
-      page[0].style[11] = fontSize + 1 + 'px';
-      //} else {
-      readabilityViewer.style.fontSize = fontSize + 1 + 'px';
-      //}
-    } catch (e) {
-      console.log('Error handling : ' + e);
-      console.assert(e);
-    }
-  }
-
-  function decreaseFont() {
-    let style = window
-      .getComputedStyle(readabilityViewer, null)
-      .getPropertyValue('font-size');
-    let fontSize = parseFloat(style);
-    readabilityViewer.style.fontSize = fontSize - 1 + 'px';
-  }
-
-  Mousetrap.bind(['command++', 'ctrl++'], function(e) {
+  /* Mousetrap.bind(['command++', 'ctrl++'], (e) => {
     increaseFont();
     return false;
   });
 
-  Mousetrap.bind(['command+-', 'ctrl+-'], function(e) {
+  Mousetrap.bind(['command+-', 'ctrl+-'], (e) => {
     decreaseFont();
     return false;
-  });
+  }); */
 }
