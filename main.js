@@ -1,87 +1,71 @@
 /* Copyright (c) 2013-present The TagSpaces Authors.
  * Use of this source code is governed by the MIT license which can be found in the LICENSE.txt file. */
 
-/* globals marked, Readability, Mousetrap */
+/* globals marked, Readability, Mousetrap, initI18N, $, isWeb, sendMessageToHost */
 'use strict';
 
-sendMessageToHost({command: 'loadDefaultTextContent'});
+sendMessageToHost({ command: 'loadDefaultTextContent' });
 
-var $rtfContent;
+let $rtfContent;
 
-$(document).ready(function() {
-  var locale = getParameterByName('locale');
-  var filePath = getParameterByName('file');
-  var searchQuery = getParameterByName('query');
-  var extSettings;
+$(document).ready(() => {
+  const locale = getParameterByName('locale');
+  const filePath = getParameterByName('file');
+  const searchQuery = getParameterByName('query');
+  let extSettings;
 
   initI18N(locale, 'ns.viewerRTF.json');
   loadExtSettings();
 
   $rtfContent = $('#rtfContent');
 
-  var styles = ['', 'solarized-dark', 'github', 'metro-vibes', 'clearness', 'clearness-dark'];
-  var currentStyleIndex = 0;
-  if (extSettings && extSettings.styleIndex) {
-    currentStyleIndex = extSettings.styleIndex;
-  }
-
-  var zoomSteps = ['zoomSmallest', 'zoomSmaller', 'zoomSmall', 'zoomDefault', 'zoomLarge', 'zoomLarger', 'zoomLargest'];
-  var currentZoomState = 3;
+  const zoomSteps = [
+    'zoomSmallest',
+    'zoomSmaller',
+    'zoomSmall',
+    'zoomDefault',
+    'zoomLarge',
+    'zoomLarger',
+    'zoomLargest'
+  ];
+  let currentZoomState = 3;
   if (extSettings && extSettings.zoomState) {
     currentZoomState = extSettings.zoomState;
   }
 
   $rtfContent.removeClass();
-  $rtfContent.addClass('markdown ' + styles[currentStyleIndex] + ' ' + zoomSteps[currentZoomState]);
+  $rtfContent.addClass('markdown ' + zoomSteps[currentZoomState]);
 
-  $('#changeStyleButton').on('click', function() {
-    currentStyleIndex = currentStyleIndex + 1;
-    if (currentStyleIndex >= styles.length) {
-      currentStyleIndex = 0;
-    }
-    $rtfContent.removeClass();
-    $rtfContent.addClass('markdown ' + styles[currentStyleIndex] + ' ' + zoomSteps[currentZoomState]);
-    saveExtSettings();
-  });
-
-  $('#resetStyleButton').on('click', function() {
-    currentStyleIndex = 0;
-    $rtfContent.removeClass();
-    $rtfContent.addClass('markdown ' + styles[currentStyleIndex] + ' ' + zoomSteps[currentZoomState]);
-    saveExtSettings();
-  });
-
-  $('#zoomInButton').on('click', function() {
-    currentZoomState++;
+  $('#zoomInButton').on('click', () => {
+    currentZoomState += 1;
     if (currentZoomState >= zoomSteps.length) {
       currentZoomState = 6;
     }
     $rtfContent.removeClass();
-    $rtfContent.addClass('markdown ' + styles[currentStyleIndex] + ' ' + zoomSteps[currentZoomState]);
+    $rtfContent.addClass('markdown ' + zoomSteps[currentZoomState]);
     saveExtSettings();
   });
 
-  $('#zoomOutButton').on('click', function() {
-    currentZoomState--;
+  $('#zoomOutButton').on('click', () => {
+    currentZoomState -= 1;
     if (currentZoomState < 0) {
       currentZoomState = 0;
     }
     $rtfContent.removeClass();
-    $rtfContent.addClass('markdown ' + styles[currentStyleIndex] + ' ' + zoomSteps[currentZoomState]);
+    $rtfContent.addClass('markdown ' + zoomSteps[currentZoomState]);
     saveExtSettings();
   });
 
-  $('#zoomResetButton').on('click', function() {
+  $('#zoomResetButton').on('click', () => {
     currentZoomState = 3;
     $rtfContent.removeClass();
-    $rtfContent.addClass('markdown ' + styles[currentStyleIndex] + ' ' + zoomSteps[currentZoomState]);
+    $rtfContent.addClass('markdown ' + zoomSteps[currentZoomState]);
     saveExtSettings();
   });
 
   function saveExtSettings() {
-    var settings = {
-      'styleIndex': currentStyleIndex,
-      'zoomState': currentZoomState
+    const settings = {
+      zoomState: currentZoomState
     };
     localStorage.setItem('viewerHTMLSettings', JSON.stringify(settings));
   }
@@ -89,58 +73,49 @@ $(document).ready(function() {
   function loadExtSettings() {
     extSettings = JSON.parse(localStorage.getItem('viewerHTMLSettings'));
   }
-
-  // Menu: hide readability items
-  $('#readabilityFont').hide();
-  $('#readabilityFontSize').hide();
-  // $('#themeStyle').hide();
-  $('#readabilityOff').hide();
 });
 
 // fixing embedding of local images
 function fixingEmbeddingOfLocalImages($rtfContent, fileDirectory) {
-  var hasURLProtocol = function(url) {
-    return (
-      url.indexOf('http://') === 0 ||
-      url.indexOf('https://') === 0 ||
-      url.indexOf('file://') === 0 ||
-      url.indexOf('data:') === 0
-    );
-  };
+  const hasURLProtocol = url =>
+    url.indexOf('http://') === 0 ||
+    url.indexOf('https://') === 0 ||
+    url.indexOf('file://') === 0 ||
+    url.indexOf('data:') === 0;
 
-  $rtfContent.find('img[src]').each(function() {
-    var currentSrc = $(this).attr('src');
+  $rtfContent.find('img[src]').each(() => {
+    const currentSrc = $(this).attr('src');
     if (!hasURLProtocol(currentSrc)) {
-      var path = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
+      const path = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
       $(this).attr('src', path);
     }
   });
 
-  $rtfContent.find('a[href]').each(function() {
-    var currentSrc = $(this).attr('href');
-    var path;
+  $rtfContent.find('a[href]').each(() => {
+    let currentSrc = $(this).attr('href');
+    let path;
 
     if (!hasURLProtocol(currentSrc)) {
-      var path = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
-      $(this).attr('href', path);
+      const path1 = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
+      $(this).attr('href', path1);
     }
 
     $(this).off();
-    $(this).on('click', function(e) {
+    $(this).on('click', e => {
       e.preventDefault();
       if (path) {
         currentSrc = encodeURIComponent(path);
       }
-      var msg = {command: 'openLinkExternally', link: currentSrc};
+      const msg = { command: 'openLinkExternally', link: currentSrc };
       sendMessageToHost(msg);
     });
   });
 }
 
 function stringToBinaryArray(string) {
-  var buffer = new ArrayBuffer(string.length);
-  var bufferView = new Uint8Array(buffer);
-  for (var i = 0; i < string.length; i++) {
+  const buffer = new ArrayBuffer(string.length);
+  const bufferView = new Uint8Array(buffer);
+  for (let i = 0; i < string.length; i += 1) {
     bufferView[i] = string.charCodeAt(i);
   }
   return buffer;
@@ -156,50 +131,50 @@ function setUnsafeLink(elem, warn) {
 
 function displayRtfFile(blob) {
   try {
-    var showPicBorder = $('#showpicborder').prop('checked');
-    var warnHttpLinks = $('#warnhttplink').prop('checked');
-    var settings = {
-      onPicture: function(create) {
-        var elem = create().attr('class', 'rtfpict'); // WHY does addClass not work on <svg>?!
+    const showPicBorder = $('#showpicborder').prop('checked');
+    const warnHttpLinks = $('#warnhttplink').prop('checked');
+    const settings = {
+      onPicture: create => {
+        const elem = create().attr('class', 'rtfpict'); // WHY does addClass not work on <svg>?!
         return setPictBorder(elem, showPicBorder);
       },
-      onHyperlink: function(create, hyperlink) {
-        var url = hyperlink.url();
-        var lnk = create();
-        if (url.substr(0, 7) == 'http://') {
-          // Wrap http:// links into a <span>
-          var span = setUnsafeLink($('<span>').addClass('unsafelink').append(lnk), warnHttpLinks);
-          span.click(function(evt) {
-            if ($('#warnhttplink').prop('checked')) {
-              evt.preventDefault();
-              alert('Unsafe link: ' + url);
-              return false;
-            }
-          });
-          return {
-            content: lnk,
-            element: span
-          };
-        } else {
-          return {
-            content: lnk,
-            element: lnk
-          };
-        }
+      onHyperlink: (create, hyperlink) => {
+        const url = hyperlink.url();
+        const lnk = create();
+        const span = setUnsafeLink(
+          $('<span>')
+            .addClass('unsafelink')
+            .append(lnk),
+          warnHttpLinks
+        );
+        span.click(evt => {
+          evt.preventDefault();
+          sendMessageToHost({ command: 'openLinkExternally', link: url });
+        });
+        return {
+          content: lnk,
+          element: span
+        };
       }
     };
-    var doc = new RTFJS.Document(blob, settings);
-    var haveMeta = false;
-    var meta = doc.metadata();
-    for (var prop in meta) {
-      console.log(meta)
-      $('#rtfContent').append($('<div>').append($('<span>').text(prop + ': ')).append($('<span>').text(meta[prop].toString())));
+    const doc = new RTFJS.Document(blob, settings);
+    let haveMeta = false;
+    const meta = doc.metadata();
+    for (let prop in meta) {
+      console.log(meta);
+      $('#rtfContent').append(
+        $('<div>')
+          .append($('<span>').text(prop + ': '))
+          .append($('<span>').text(meta[prop].toString()))
+      );
       haveMeta = true;
     }
     if (haveMeta) {
       $('#havemeta').show();
     }
-    $('#rtfContent').empty().append(doc.render());
+    $('#rtfContent')
+      .empty()
+      .append(doc.render());
     $('#closebutton').show();
     $('#tools').show();
     console.log('All done!');
@@ -207,135 +182,39 @@ function displayRtfFile(blob) {
     if (e instanceof RTFJS.Error) {
       console.log('Error: ' + e.message);
       $('#content').text('Error: ' + e.message);
-    }
-    else {
+    } else {
       throw e;
     }
   }
 }
 
-function setContent(content, fileDirectory, sourceURL) {
+function setContent(content, fileDirectory) {
   $rtfContent = $('#rtfContent');
 
   displayRtfFile(stringToBinaryArray(content));
 
   if (fileDirectory.indexOf('file://') === 0) {
-    fileDirectory = fileDirectory.substring(('file://').length, fileDirectory.length);
+    fileDirectory = fileDirectory.substring(
+      'file://'.length,
+      fileDirectory.length
+    );
   }
 
   fixingEmbeddingOfLocalImages($rtfContent, fileDirectory);
 
-  // View readability mode
-  var readabilityViewer = document.getElementById('rtfContent');
-  var fontSize = 14;
-/*
-  $('#readabilityOn').on('click', function() {
-    try {
-      var documentClone = document.cloneNode(true);
-      var article = new Readability(document.baseURI, documentClone).parse();
-      $(readabilityViewer).html(article.content);
-      fixingEmbeddingOfLocalImages($(readabilityViewer, fileDirectory));
-      readabilityViewer.style.fontSize = fontSize;//'large';
-      readabilityViewer.style.fontFamily = 'Helvetica, Arial, sans-serif';
-      readabilityViewer.style.background = '#ffffff';
-      readabilityViewer.style.color = '';
-      $('#readabilityOff').css('display', 'inline-block');
-      //$('#themeStyle').show();
-      $('#readabilityFont').show();
-      $('#readabilityFontSize').show();
-      $('#readabilityOn').hide();
-      $('#changeStyleButton').hide();
-      $('#resetStyleButton').hide();
-      $('#zoomInButton').hide();
-      $('#zoomOutButton').hide();
-      $('#zoomResetButton').hide();
-    } catch (e) {
-      console.log('Error handling' + e);
-      var msg = {
-        command: 'showAlertDialog',
-        title: 'Readability Mode',
-        message: 'This content can not be loaded.'
-      };
-      window.parent.postMessage(JSON.stringify(msg), '*');
-    }
-  });
-
-  $('#readabilityOff').on('click', function() {
-    $rtfContent.empty();
-    $rtfContent.append(content);
-    fixingEmbeddingOfLocalImages($rtfContent, fileDirectory);
-    readabilityViewer.style.fontSize = '';//'large';
-    readabilityViewer.style.fontFamily = '';
-    readabilityViewer.style.color = '';
-    readabilityViewer.style.background = '';
-    $('#readabilityOn').show();
-    $('#changeStyleButton').show();
-    $('#resetStyleButton').show();
-    $('#readabilityOff').hide();
-    $('#readabilityFont').hide();
-    $('#readabilityFontSize').hide();
-    $('#themeStyle').hide();
-  });
-*/
-  $('#toSansSerifFont').on('click', function(e) {
-    e.stopPropagation();
-    readabilityViewer.style.fontFamily = 'Helvetica, Arial, sans-serif';
-  });
-
-  $('#toSerifFont').on('click', function(e) {
-    e.stopPropagation();
-    readabilityViewer.style.fontFamily = 'Georgia, Times New Roman, serif';
-  });
-
-  $('#increasingFontSize').on('click', function(e) {
-    e.stopPropagation();
-    increaseFont();
-  });
-
-  $('#decreasingFontSize').on('click', function(e) {
-    e.stopPropagation();
-    decreaseFont();
-  });
-
-  $('#whiteBackgroundColor').on('click', function(e) {
-    e.stopPropagation();
-    readabilityViewer.style.background = '#ffffff';
-    readabilityViewer.style.color = '';
-  });
-
-  $('#blackBackgroundColor').on('click', function(e) {
-    e.stopPropagation();
-    readabilityViewer.style.background = '#282a36';
-    readabilityViewer.style.color = '#ffffff';
-  });
-
-  $('#sepiaBackgroundColor').on('click', function(e) {
-    e.stopPropagation();
-    readabilityViewer.style.color = '#5b4636';
-    readabilityViewer.style.background = '#f4ecd8';
-  });
-
-  if (sourceURL) {
-    $('#openSourceURL').show();
-  } else {
-    $('#openSourceURL').hide();
-  }
-
-  $('#openSourceURL').on('click', function() {
-    sendMessageToHost({command: 'openLinkExternally', link: sourceURL});
-  });
-
   function increaseFont() {
     try {
-      var style = window.getComputedStyle(readabilityViewer, null).getPropertyValue('font-size');
-      var fontSize = parseFloat(style);
+      let style = window
+        .getComputedStyle(readabilityViewer, null)
+        .getPropertyValue('font-size');
+      let fontSize = parseFloat(style);
       //if($('#readability-page-1').hasClass('page')){
-      var page = document.getElementsByClassName('markdown');
+      let page = document.getElementsByClassName('markdown');
       console.log(page[0].style);
-      page[0].style.fontSize = (fontSize + 1) + 'px';
-      page[0].style[11] = (fontSize + 1) + 'px';
+      page[0].style.fontSize = fontSize + 1 + 'px';
+      page[0].style[11] = fontSize + 1 + 'px';
       //} else {
-      readabilityViewer.style.fontSize = (fontSize + 1) + 'px';
+      readabilityViewer.style.fontSize = fontSize + 1 + 'px';
       //}
     } catch (e) {
       console.log('Error handling : ' + e);
@@ -344,9 +223,11 @@ function setContent(content, fileDirectory, sourceURL) {
   }
 
   function decreaseFont() {
-    var style = window.getComputedStyle(readabilityViewer, null).getPropertyValue('font-size');
-    var fontSize = parseFloat(style);
-    readabilityViewer.style.fontSize = (fontSize - 1) + 'px';
+    let style = window
+      .getComputedStyle(readabilityViewer, null)
+      .getPropertyValue('font-size');
+    let fontSize = parseFloat(style);
+    readabilityViewer.style.fontSize = fontSize - 1 + 'px';
   }
 
   Mousetrap.bind(['command++', 'ctrl++'], function(e) {
