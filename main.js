@@ -83,25 +83,25 @@ function fixingEmbeddingOfLocalImages($rtfContentPar, fileDirectory) {
     url.indexOf('file://') === 0 ||
     url.indexOf('data:') === 0;
 
-  $rtfContentPar.find('img[src]').each(() => {
-    const currentSrc = $(this).attr('src');
+  $rtfContentPar.find('img[src]').each((index, link) => {
+    const currentSrc = $(link).attr('src');
     if (!hasURLProtocol(currentSrc)) {
       const path = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
-      $(this).attr('src', path);
+      $(link).attr('src', path);
     }
   });
 
-  $rtfContentPar.find('a[href]').each(() => {
-    let currentSrc = $(this).attr('href');
+  /* $rtfContentPar.find('a[href]').each((index, link) => {
+    let currentSrc = $(link).attr('href');
     let path;
 
     if (!hasURLProtocol(currentSrc)) {
       const path1 = (isWeb ? '' : 'file://') + fileDirectory + '/' + currentSrc;
-      $(this).attr('href', path1);
+      $(link).attr('href', path1);
     }
 
-    $(this).off();
-    $(this).on('click', e => {
+    $(link).off();
+    $(link).on('click', e => {
       e.preventDefault();
       if (path) {
         currentSrc = encodeURIComponent(path);
@@ -109,7 +109,7 @@ function fixingEmbeddingOfLocalImages($rtfContentPar, fileDirectory) {
       const msg = { command: 'openLinkExternally', link: currentSrc };
       sendMessageToHost(msg);
     });
-  });
+  }); */
 }
 
 function stringToBinaryArray(string) {
