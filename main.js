@@ -36,6 +36,7 @@ $(document).ready(() => {
   $rtfContent.removeClass();
   $rtfContent.addClass('markdown ' + zoomSteps[currentZoomState]);
 
+  $('#zoomInButton').off();
   $('#zoomInButton').on('click', () => {
     currentZoomState += 1;
     if (currentZoomState >= zoomSteps.length) {
@@ -46,6 +47,7 @@ $(document).ready(() => {
     saveExtSettings();
   });
 
+  $('#zoomOutButton').off();
   $('#zoomOutButton').on('click', () => {
     currentZoomState -= 1;
     if (currentZoomState < 0) {
@@ -56,6 +58,7 @@ $(document).ready(() => {
     saveExtSettings();
   });
 
+  $('#zoomResetButton').off();
   $('#zoomResetButton').on('click', () => {
     currentZoomState = 3;
     $rtfContent.removeClass();
